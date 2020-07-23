@@ -113,7 +113,7 @@ public class MasterServlet extends HttpServlet {
 				break;
 			case "accounts":
 				if (portions.length == 1) {
-					uc.submitAccount(req, res);
+					ac.submitAccount(req, res);
 				}
 				if (portions.length == 2) {
 					switch (portions[1]) {

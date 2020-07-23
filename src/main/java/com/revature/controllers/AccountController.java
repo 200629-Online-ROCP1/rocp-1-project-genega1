@@ -160,6 +160,46 @@ public class AccountController {
 		}
 
 	}
+	
+	public void submitAccount(HttpServletRequest req, HttpServletResponse res) throws IOException {
+		// Cannot Do Action Because User is not logged in
+		HttpSession ses = req.getSession(false);
+		if (rh.isLoggedOut(req, res)) {
+			res.setStatus(401);
+			res.getWriter().println("The requested action is not permitted");
+			return;
+		} else {
+
+			// Reading Body of Request into string
+			String body = rh.readBody(req, res);
+
+			// CREATE OBJECT FROM SESSION
+			User u = (User) ses.getAttribute("user");
+
+			// READ OBJECT FROM BODY
+			Account a = om.readValue(body, Account.class);
+
+			if (u.getRole().getRole().equals("Standard") && a.getUserId() != u.getUserId()) {
+
+				res.setStatus(401);
+				res.getWriter().println("The requested action is not permitted");
+				return;
+			}
+
+			if (as.submitAccount(a)) {
+
+				// WRITE OBJECT TO BODY
+				String json = om.writeValueAsString(a);
+				res.setStatus(201);
+				res.getWriter().println(json);
+
+			} else {
+				res.setStatus(401);
+				res.getWriter().println("The requested action is not permitted");
+			}
+		}
+
+	}
 
 	public void updateAccount(HttpServletRequest req, HttpServletResponse res) throws IOException {
 

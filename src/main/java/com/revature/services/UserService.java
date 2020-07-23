@@ -30,14 +30,14 @@ public class UserService {
 	}
 
 
-	public User getUsersById(int id) {
-		return dao.getUsersById(id);
+	public User findUsersById(int id) {
+		return dao.selectUser(id);
 	}
 
 
-	public User updateUser(User other, User origin) {
-		// TODO Auto-generated method stub
-		return dao.updateUser(other, origin);
+	public User updateUser(User other) {
+		User origin = findUsersById(other.getUserId());
+		return dao.update(other, origin);
 	}
 
 

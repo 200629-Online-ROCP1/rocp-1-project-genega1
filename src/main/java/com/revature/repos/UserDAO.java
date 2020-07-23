@@ -15,6 +15,8 @@ import com.revature.util.ConnectionUtil;
 
 public class UserDAO implements IUserDAO {
 
+	IUserRoleDAO urdao = new UserRoleDAO();
+	
 	@Override
 	public Login getLoginCredentials(Login l) {
 
@@ -77,8 +79,13 @@ public class UserDAO implements IUserDAO {
 				user.setLastName(retrievedValue);
 				retrievedValue = result.getString("email");
 				user.setEmail(retrievedValue);
+				
+				
 				retrievedInt = result.getInt("role_id");
-				user.setRole(Role.createFromId(retrievedInt));
+				
+				Role r = urdao.findById(retrievedInt);
+				
+				user.setRole(r);
 
 			}
 			return user;
@@ -167,7 +174,10 @@ public class UserDAO implements IUserDAO {
 				users[i].setFirstName(result.getString("first_name"));
 				users[i].setLastName(result.getString("last_name"));
 				users[i].setEmail(result.getString("email"));
-				users[i].setRole(Role.createFromId(result.getInt("role_id")));
+				
+				
+				Role r = urdao.findById(result.getInt("role_id"));
+				users[i].setRole(r);
 
 				i++;
 			}
@@ -182,7 +192,7 @@ public class UserDAO implements IUserDAO {
 	}
 
 	@Override
-	public User getUsersById(int id) {
+	public User selectUser(int id) {
 		User u = new User();
 
 		try (Connection conn = ConnectionUtil.getConnection()) {
@@ -202,7 +212,10 @@ public class UserDAO implements IUserDAO {
 				u.setFirstName(result.getString("first_name"));
 				u.setLastName(result.getString("last_name"));
 				u.setEmail(result.getString("email"));
-				u.setRole(Role.createFromId(result.getInt("role_id")));
+				
+				
+				Role r = urdao.findById(result.getInt("role_id"));
+				u.setRole(r);
 
 			}
 
@@ -215,7 +228,7 @@ public class UserDAO implements IUserDAO {
 	}
 
 	@Override
-	public User updateUser(User other, User origin) {
+	public User update(User other, User origin) {
 		try (Connection conn = ConnectionUtil.getConnection()) {
 
 			int index = 1;
@@ -252,7 +265,7 @@ public class UserDAO implements IUserDAO {
 
 
 
-			return getUsersById(other.getUserId());
+			return selectUser(other.getUserId());
 
 		} catch (SQLException e) {
 			System.out.println(e);

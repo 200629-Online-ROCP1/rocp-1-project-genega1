@@ -18,6 +18,9 @@ import com.revature.util.ConnectionUtil;
 
 public class AccountDAO implements IAccountDAO {
 
+	IAccountTypeDAO atdao = new AccountTypeDAO();
+	IAccountStatusDAO asdao = new AccountStatusDAO();
+	
 	@Override
 	public boolean insertAccount(Account account) {
 
@@ -63,10 +66,17 @@ public class AccountDAO implements IAccountDAO {
 			while (result.next()) {
 				account.setAccountId(result.getInt("account_id"));
 				account.setBalance(result.getDouble("balance"));
-				int status_id = result.getInt("status_id");
-				account.setStatus(AccountStatus.createFromID(status_id));
+				
+				
+				int status_id = result.getInt("status_id");	
+				AccountStatus as = asdao.findById(status_id);
+				account.setStatus(as);
+				
 				int type_id = result.getInt("type_id");
-				account.setType(AccountType.createTypeFromId(type_id));
+				AccountType at = atdao.findById(type_id);
+				account.setType(at);
+				
+				
 				account.setUserId(result.getInt("user_id"));
 			}
 
@@ -191,8 +201,19 @@ public class AccountDAO implements IAccountDAO {
 				accounts[i].setAccountId(result.getInt("account_id"));
 				accounts[i].setBalance(result.getDouble("balance"));
 				
-				accounts[i].setStatus( AccountStatus.createFromID(result.getInt("status_id")) );
-				accounts[i].setType( AccountType.createTypeFromId(result.getInt("type_id")) );
+				
+				
+				int status_id = result.getInt("status_id");	
+				AccountStatus as = asdao.findById(status_id);
+				
+				
+				int type_id = result.getInt("type_id");
+				AccountType at = atdao.findById(type_id);
+				
+				
+				
+				accounts[i].setStatus( as );
+				accounts[i].setType( at );
 				
 				accounts[i].setUserId(result.getInt("user_id"));
 
@@ -228,8 +249,16 @@ public class AccountDAO implements IAccountDAO {
 				a.setAccountId(result.getInt("account_id"));
 				a.setBalance(result.getDouble("balance"));
 				
-				a.setStatus( AccountStatus.createFromID(result.getInt("status_id")) );
-				a.setType( AccountType.createTypeFromId(result.getInt("type_id")) );
+
+				int status_id = result.getInt("status_id");	
+				AccountStatus as = asdao.findById(status_id);
+				a.setStatus(as);
+				
+				int type_id = result.getInt("type_id");
+				AccountType at = atdao.findById(type_id);
+				a.setType(at);
+				
+
 				
 				a.setUserId(result.getInt("user_id"));
 
@@ -307,8 +336,16 @@ public class AccountDAO implements IAccountDAO {
 				accounts[i].setAccountId(result.getInt("account_id"));
 				accounts[i].setBalance(result.getDouble("balance"));
 				
-				accounts[i].setStatus( AccountStatus.createFromID(result.getInt("status_id")) );
-				accounts[i].setType( AccountType.createTypeFromId(result.getInt("type_id")) );
+
+				int status_id = result.getInt("status_id");	
+				AccountStatus as = asdao.findById(status_id);
+				accounts[i].setStatus(as);
+				
+				int type_id = result.getInt("type_id");
+				AccountType at = atdao.findById(type_id);
+				accounts[i].setType(at);
+				
+
 				
 				accounts[i].setUserId(result.getInt("user_id"));
 
@@ -347,8 +384,15 @@ public class AccountDAO implements IAccountDAO {
 				accounts[i].setAccountId(result.getInt("account_id"));
 				accounts[i].setBalance(result.getDouble("balance"));
 				
-				accounts[i].setStatus( AccountStatus.createFromID(result.getInt("status_id")) );
-				accounts[i].setType( AccountType.createTypeFromId(result.getInt("type_id")) );
+				
+				
+				int status_id = result.getInt("status_id");	
+				AccountStatus as = asdao.findById(status_id);
+				accounts[i].setStatus(as);
+				
+				int type_id = result.getInt("type_id");
+				AccountType at = atdao.findById(type_id);
+				accounts[i].setType(at);
 				
 				accounts[i].setUserId(result.getInt("user_id"));
 

@@ -27,10 +27,10 @@ public interface IUserDAO {
 
 
 
-	public User getUsersById(int id);
+	public User selectUser(int id);
 
 
 
-	public User updateUser(User other, User origin);
+	public User update(User other, User origin);
 
 }

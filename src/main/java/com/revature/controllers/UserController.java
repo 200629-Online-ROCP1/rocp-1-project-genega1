@@ -1,16 +1,10 @@
 package com.revature.controllers;
 
-import com.revature.services.AccountService;
 import com.revature.services.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.revature.models.Account;
 import com.revature.models.Role;
 import com.revature.models.User;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -18,7 +12,6 @@ import javax.servlet.http.HttpSession;
 public class UserController {
 
 	private static final UserService us = new UserService();
-	private static final AccountService as = new AccountService();
 	private static final ObjectMapper om = new ObjectMapper();
 	private static final RequestHelper rh = new RequestHelper();
 
@@ -37,6 +30,7 @@ public class UserController {
 
 			// GET AND CHECK CREDENTIAL OF CURRENT USER
 			User u = (User) ses.getAttribute("user");
+
 			if (!u.getRole().getRole().equals("Admin")) {
 
 				res.setStatus(401);
@@ -66,46 +60,6 @@ public class UserController {
 		}
 	}
 
-	public void submitAccount(HttpServletRequest req, HttpServletResponse res) throws IOException {
-		// Cannot Do Action Because User is not logged in
-		HttpSession ses = req.getSession(false);
-		if (rh.isLoggedOut(req, res)) {
-			res.setStatus(401);
-			res.getWriter().println("The requested action is not permitted");
-			return;
-		} else {
-
-			// Reading Body of Request into string
-			String body = rh.readBody(req, res);
-
-			// CREATE OBJECT FROM SESSION
-			User u = (User) ses.getAttribute("user");
-
-			// READ OBJECT FROM BODY
-			Account a = om.readValue(body, Account.class);
-
-			if (u.getRole().getRole().equals("Standard") && a.getUserId() != u.getUserId()) {
-
-				res.setStatus(401);
-				res.getWriter().println("The requested action is not permitted");
-				return;
-			}
-
-			if (as.submitAccount(a)) {
-
-				// WRITE OBJECT TO BODY
-				String json = om.writeValueAsString(a);
-				res.setStatus(201);
-				res.getWriter().println(json);
-
-			} else {
-				res.setStatus(401);
-				res.getWriter().println("The requested action is not permitted");
-			}
-		}
-
-	}
-
 	public void updateUser(HttpServletRequest req, HttpServletResponse res) throws IOException {
 		// Cannot Do Action Because User is not logged in
 		HttpSession ses = req.getSession(false);
@@ -129,16 +83,17 @@ public class UserController {
 			return;
 		}
 
-		User origin = us.getUsersById(other.getUserId());
-		other = us.updateUser(other, origin);
+		
+		
+		
+		other = us.updateUser(other);
 
 		if (other == null) {
 			res.setStatus(401);
 			res.getWriter().println("The requested action is not permitted");
 			return;
 		}
-		
-		
+
 		// return users
 		String json = om.writeValueAsString(other);
 		res.setStatus(200);
@@ -163,16 +118,12 @@ public class UserController {
 			return;
 		}
 
-		User[] users;
+		User[] users = us.getUsers();
 
-		// Find number of users
-		int userCount = us.getUserCount();
-
-		users = new User[userCount];
-
-		users = us.getUsers();
+		
+		
+		
 		// Populate users
-
 		// return users
 		String json = om.writeValueAsString(users);
 		res.setStatus(200);
@@ -198,7 +149,7 @@ public class UserController {
 			return;
 		}
 
-		User user = us.getUsersById(id);
+		User user = us.findUsersById(id);
 
 		// return user
 		String json = om.writeValueAsString(user);
@@ -211,11 +162,6 @@ public class UserController {
 		// TODO Auto-generated method stub
 
 		Role role = new Role();
-
-		role.setRoleId(0);
-		role.setRole("jello");
-
-		// WRITE OBJECT TO BODY
 		String json = om.writeValueAsString(role);
 
 		res.setStatus(200);
